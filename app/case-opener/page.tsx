@@ -3,30 +3,30 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 
-// 1. DYNAMIC PRIZE POOLS (Bet badalne par ye list change hogi)
+// 1. DYNAMIC PRIZE POOLS (Using ultra-reliable Text Emojis with 3D drop-shadows)
 const prizeLibrary = {
   25: [
-    { id: 1, name: "Teddy", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Teddy%20bear/3D/teddy_bear_3d.png", chance: "50%", value: 15, rarity: "common" },
-    { id: 2, name: "Gift", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Wrapped%20present/3D/wrapped_present_3d.png", chance: "50%", value: 25, rarity: "epic" }
+    { id: 1, name: "Teddy", icon: "🧸", chance: "50%", value: 15, rarity: "common" },
+    { id: 2, name: "Gift", icon: "🎁", chance: "50%", value: 25, rarity: "epic" }
   ],
   50: [
-    { id: 3, name: "Rocket", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Rocket/3D/rocket_3d.png", chance: "25%", value: 50, rarity: "epic" },
-    { id: 4, name: "Cake", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Birthday%20cake/3D/birthday_cake_3d.png", chance: "25%", value: 50, rarity: "common" },
-    { id: 5, name: "Flowers", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Bouquet/3D/bouquet_3d.png", chance: "25%", value: 50, rarity: "common" },
-    { id: 6, name: "Champagne", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Bottle%20with%20popping%20cork/3D/bottle_with_popping_cork_3d.png", chance: "25%", value: 50, rarity: "common" }
+    { id: 3, name: "Rocket", icon: "🚀", chance: "25%", value: 50, rarity: "epic" },
+    { id: 4, name: "Cake", icon: "🎂", chance: "25%", value: 50, rarity: "common" },
+    { id: 5, name: "Flowers", icon: "💐", chance: "25%", value: 50, rarity: "common" },
+    { id: 6, name: "Champagne", icon: "🍾", chance: "25%", value: 50, rarity: "common" }
   ],
   100: [
-    { id: 7, name: "Trophy", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Trophy/3D/trophy_3d.png", chance: "33%", value: 100, rarity: "epic" },
-    { id: 8, name: "Ring", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Ring/3D/ring_3d.png", chance: "33%", value: 100, rarity: "epic" },
-    { id: 9, name: "Diamond", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Gem%20stone/3D/gem_stone_3d.png", chance: "34%", value: 100, rarity: "legendary" }
+    { id: 7, name: "Trophy", icon: "🏆", chance: "33%", value: 100, rarity: "epic" },
+    { id: 8, name: "Ring", icon: "💍", chance: "33%", value: 100, rarity: "epic" },
+    { id: 9, name: "Diamond", icon: "💎", chance: "34%", value: 100, rarity: "legendary" }
   ],
   250: [
-    { id: 10, name: "Crystals", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Milky%20way/3D/milky_way_3d.png", chance: "100%", value: 250, rarity: "legendary" }
+    { id: 10, name: "Crystals", icon: "✨", chance: "100%", value: 250, rarity: "legendary" }
   ]
 };
 
-const bonusItem = { id: 99, name: "Bonus", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Briefcase/3D/briefcase_3d.png", chance: "0.10%", value: 500, rarity: "legendary" };
-const demoGift = { id: 100, name: "Demo Gift", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Wrapped%20present/3D/wrapped_present_3d.png", chance: "100%", value: 0, rarity: "common" };
+const bonusItem = { id: 99, name: "Bonus", icon: "💼", chance: "0.10%", value: 500, rarity: "legendary" };
+const demoGift = { id: 100, name: "Demo Gift", icon: "🎁", chance: "100%", value: 0, rarity: "common" };
 
 type BetLevel = 25 | 50 | 100 | 250;
 
@@ -45,10 +45,9 @@ export default function CaseOpener() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Get current active prize pool based on selected bet
   const currentPool = prizeLibrary[betAmount];
 
-  // Jab bet amount change ho, toh purani list ko naye items se replace karo
+  // Refresh items when Bet Amount changes
   useEffect(() => {
     if (isRolling) return;
     const initial = Array.from({ length: 15 }).map(() => currentPool[Math.floor(Math.random() * currentPool.length)]);
@@ -71,7 +70,6 @@ export default function CaseOpener() {
     setTransitionStyle("none");
     setSliderTranslate(0); 
 
-    // Rigging Logic: Always pick from current active pool
     const riggedWinner = isDemo ? demoGift : currentPool[Math.floor(Math.random() * currentPool.length)];
 
     const targetIndex = 65; 
@@ -128,7 +126,7 @@ export default function CaseOpener() {
         </div>
       </div>
 
-      {/* Bet Selectors (NOW FULLY DYNAMIC) */}
+      {/* Bet Selectors */}
       <div className="w-full max-w-md flex justify-between px-4 mt-6">
         {([25, 50, 100, 250] as BetLevel[]).map((amt) => (
           <button 
@@ -164,7 +162,10 @@ export default function CaseOpener() {
             <div key={idx} className={`w-28 h-36 rounded-2xl flex flex-col items-center justify-center border-2 shrink-0 relative overflow-hidden bg-[#15151e] ${
               item.name === "Bonus" ? 'border-yellow-500 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)]' : 'border-gray-800'
             }`}>
-              <img src={item.img} alt={item.name} className="w-20 h-20 object-contain drop-shadow-2xl z-10" />
+              
+              {/* REPLACED IMAGE WITH EMOJI HERE */}
+              <span className="text-6xl drop-shadow-2xl z-10">{item.icon}</span>
+
               {item.name === "Bonus" && <span className="text-yellow-500 font-bold text-sm absolute bottom-2 tracking-widest z-10">BONUS</span>}
               
               {item.name !== "Bonus" && item.name !== "Demo Gift" && (
@@ -199,7 +200,7 @@ export default function CaseOpener() {
         </div>
       </div>
 
-      {/* Grid of Winning Possibilities (NOW DYNAMIC) */}
+      {/* Grid of Winning Possibilities */}
       <div className="w-full max-w-md px-4 mt-10">
         <p className="text-center text-gray-400 font-medium mb-4">You can win...</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -208,7 +209,10 @@ export default function CaseOpener() {
               {prize.rarity === 'legendary' && (
                 <div className="absolute top-0 right-0 bg-blue-500 text-white text-[8px] font-bold px-4 py-1 rotate-45 translate-x-3 translate-y-1 shadow-md uppercase tracking-wider">Crystals</div>
               )}
-              <img src={prize.img} alt={prize.name} className="w-16 h-16 object-contain drop-shadow-lg mt-2" />
+              
+              {/* REPLACED IMAGE WITH EMOJI HERE */}
+              <span className="text-4xl drop-shadow-lg mt-2">{prize.icon}</span>
+
               <span className="text-gray-500 text-[10px] mt-2 font-bold">✨ {prize.chance}</span>
               <div className="bg-[#0a0a0f] border border-gray-700 w-full text-center mt-1 py-1 rounded flex justify-center items-center gap-1">
                 <span className="text-white font-bold text-xs">{prize.value}</span>
@@ -228,7 +232,10 @@ export default function CaseOpener() {
             </button>
             
             <h2 className="text-white text-2xl font-bold mt-2">Demo gift</h2>
-            <img src={demoGift.img} alt="Gift" className="w-32 h-32 object-contain my-6 drop-shadow-[0_0_30px_rgba(255,0,0,0.3)] animate-pulse" />
+            
+            {/* REPLACED IMAGE WITH EMOJI HERE */}
+            <span className="text-8xl drop-shadow-[0_0_30px_rgba(255,0,0,0.3)] animate-pulse my-4">{demoGift.icon}</span>
+
             <p className="text-gray-400 text-center font-medium mb-8">Demo mode is for testing chances.</p>
             
             <button 
