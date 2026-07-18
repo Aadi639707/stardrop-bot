@@ -24,40 +24,76 @@ const demoGift = { id: 100, name: "Demo Gift", icon: "🎁", chance: "100%", val
 
 type BetLevel = 25 | 50;
 
+// Fake Bot Names List
+const botNames = ["Aman", "Rahul", "Priya", "GamerX", "Vikash", "Neha", "Rohan", "King", "Sniper", "Raj", "Aryan", "ToxicGamer"];
+
 export default function CaseOpener() {
   const [balance, setBalance] = useState(1000); 
   const [betAmount, setBetAmount] = useState<BetLevel>(25);
   const [isDemo, setIsDemo] = useState(true);
   
-  // Animation States
+  // Animation & Game States
   const [isRolling, setIsRolling] = useState(false);
   const [stripItems, setStripItems] = useState<any[]>([]);
   const [sliderTranslate, setSliderTranslate] = useState(0);
   const [transitionStyle, setTransitionStyle] = useState("none");
   const [showPopup, setShowPopup] = useState(false);
   const [winningItem, setWinningItem] = useState<any | null>(null);
+  
+  // Live Feed State
+  const [liveWin, setLiveWin] = useState<any | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const spinCount = useRef(0);
   
-  // Hardcoded pixel values for 100% accuracy across all devices
   const ITEM_WIDTH = 112; 
   const GAP_WIDTH = 16;
   const TOTAL_ITEM_BLOCK = ITEM_WIDTH + GAP_WIDTH; // 128px
   
+  // Initial Setup
   useEffect(() => {
     if (isRolling) return;
     const initial = Array.from({ length: 15 }).map(() => prizePool[Math.floor(Math.random() * prizePool.length)]);
     initial[2] = bonusItem;
     setStripItems(initial);
     
-    // Visually center the first item on page load
     if (containerRef.current) {
         const cw = containerRef.current.clientWidth;
         setSliderTranslate((cw / 2) - (ITEM_WIDTH / 2));
     }
     setTransitionStyle("none");
     setWinningItem(null);
+  }, []);
+
+  // Fake Live Feed Generator (MULTIPLAYER ILLUSION)
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    const generateFakeWin = () => {
+      const randomName = botNames[Math.floor(Math.random() * botNames.length)];
+      
+      // Make it realistic: mostly small wins, rare big wins
+      const rand = Math.random();
+      let fakePrize;
+      if (rand < 0.60) fakePrize = prizePool.find(p => p.value === 15) || prizePool[11];
+      else if (rand < 0.85) fakePrize = prizePool.find(p => p.value === 25) || prizePool[9];
+      else if (rand < 0.95) fakePrize = prizePool.find(p => p.value === 50) || prizePool[4];
+      else fakePrize = prizePool.find(p => p.value >= 100) || prizePool[1];
+
+      setLiveWin({ name: randomName, prize: fakePrize });
+
+      // Hide the notification after 3 seconds
+      setTimeout(() => setLiveWin(null), 3000);
+
+      // Schedule next fake win between 4s to 8s
+      const nextTime = Math.floor(Math.random() * 4000) + 4000;
+      timeoutId = setTimeout(generateFakeWin, nextTime);
+    };
+
+    // Start the first fake popup after 2 seconds
+    timeoutId = setTimeout(generateFakeWin, 2000);
+
+    return () => clearTimeout(timeoutId);
   }, []);
 
   const startRoll = () => {
@@ -111,17 +147,12 @@ export default function CaseOpener() {
 
     const cw = containerRef.current.clientWidth;
     
-    // STEP 1: Instantly snap to the start invisibly
     setTransitionStyle("none");
     setSliderTranslate((cw / 2) - (ITEM_WIDTH / 2));
 
-    // STEP 2: Use double RequestAnimationFrame to force browser reflow
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        // Exact Math: (Target Index * Total Block) + Half of item width
         const exactCenterOfTarget = (targetIndex * TOTAL_ITEM_BLOCK) + (ITEM_WIDTH / 2);
-        
-        // Final position = Center of container minus exact center of target
         const offset = Math.floor(Math.random() * 40) - 20; 
         const finalTranslate = (cw / 2) - exactCenterOfTarget + offset;
 
@@ -145,6 +176,25 @@ export default function CaseOpener() {
   return (
     <div className="min-h-screen bg-[#0a0a0f] flex flex-col items-center pb-24 relative overflow-hidden">
       
+      {/* 🚀 FAKE MULTIPLAYER LIVE FEED TOAST */}
+      <div 
+        className={`absolute top-20 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 pointer-events-none w-max ${
+          liveWin ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+        }`}
+      >
+        {liveWin && (
+          <div className="bg-[#15151e]/90 border border-gray-700 backdrop-blur-md px-4 py-2 rounded-full flex items-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+            <span className="text-white text-xs font-medium">
+              <span className="text-cyan-400 font-bold">{liveWin.name}</span> won {liveWin.prize.name} 
+              <span className="ml-1 text-base">{liveWin.prize.icon}</span>
+            </span>
+            <span className="text-green-400 text-xs font-bold bg-green-400/10 px-2 py-0.5 rounded-md">
+              +{liveWin.prize.value} ⭐
+            </span>
+          </div>
+        )}
+      </div>
+
       {/* Top Header */}
       <div className="w-full flex justify-between items-center p-4 max-w-md mt-2">
         <Link href="/" className="text-white flex items-center gap-2 font-bold bg-[#15151e] px-4 py-2 rounded-xl border border-gray-800 active:scale-95 transition">
@@ -187,19 +237,18 @@ export default function CaseOpener() {
         ))}
       </div>
 
-      {/* CS:GO Style Rolling Slider - FIXED CSS LOGIC */}
+      {/* CS:GO Style Rolling Slider */}
       <div className="w-full max-w-md mt-6 relative h-44 flex items-center bg-[#0d0d14] border-y border-gray-800 overflow-hidden" ref={containerRef}>
         <div className="absolute left-1/2 -translate-x-1/2 w-16 h-full bg-blue-500/10 blur-xl z-0"></div>
         <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-1 bg-blue-500 z-20 shadow-[0_0_15px_rgba(59,130,246,1)]"></div>
 
-        {/* Removed paddingLeft logic completely, using explicit absolute positioning */}
         <div 
           className="flex items-center absolute left-0 z-10"
           style={{
             transform: `translateX(${sliderTranslate}px)`,
             transition: transitionStyle,
             width: "max-content",
-            gap: `${GAP_WIDTH}px` // Explicit 16px gap
+            gap: `${GAP_WIDTH}px`
           }}
         >
           {stripItems.map((item, idx) => (
