@@ -15,9 +15,9 @@ const prizePool = [
   { id: 8, name: "Teddy", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Teddy%20bear/3D/teddy_bear_3d.png", chance: "1.44%", value: 15, rarity: "common" },
 ];
 
-// Special Bonus Item
-const bonusItem = { id: 9, name: "Bonus", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Briefcase/3D/briefcase_3d.png", value: 500, rarity: "legendary" };
-const demoGift = { id: 10, name: "Demo Gift", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Wrapped%20present/3D/wrapped_present_3d.png", value: 0, rarity: "common" };
+// Special Bonus Items (FIXED: Added 'chance' property to prevent TypeScript error)
+const bonusItem = { id: 9, name: "Bonus", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Briefcase/3D/briefcase_3d.png", chance: "0.10%", value: 500, rarity: "legendary" };
+const demoGift = { id: 10, name: "Demo Gift", img: "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Wrapped%20present/3D/wrapped_present_3d.png", chance: "100%", value: 0, rarity: "common" };
 
 export default function CaseOpener() {
   const [balance, setBalance] = useState(0);
