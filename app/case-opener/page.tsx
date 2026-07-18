@@ -31,6 +31,7 @@ export default function CaseOpener() {
   const [isDemo, setIsDemo] = useState(true);
   
   // Animation & Game States
+  
   const [isRolling, setIsRolling] = useState(false);
   const [stripItems, setStripItems] = useState<any[]>([]);
   const [sliderTranslate, setSliderTranslate] = useState(0);
