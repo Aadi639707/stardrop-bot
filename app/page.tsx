@@ -1,12 +1,12 @@
-import ProfileHeader from './components/ProfileHeader';
+import Header from './components/Header';
 import SpinWheel from './components/SpinWheel';
 import NFTCard from './components/NFTCard';
 
 export default function Home() {
   return (
     <main className="min-h-screen p-4 pb-24 max-w-md mx-auto">
-      {/* Dynamic Profile fetched via Telegram SDK */}
-      <ProfileHeader />
+      {/* Dynamic Profile */}
+      <Header />
 
       {/* The Rigged Roulette Wheel */}
       <SpinWheel />
@@ -26,7 +26,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Floating Bottom Nav (UI Only for now) */}
+      {/* Floating Bottom Nav */}
       <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1a1a24] border-t border-gray-800 px-6 py-3 flex justify-between items-center rounded-t-3xl z-40">
         <button className="flex flex-col items-center text-gray-500 hover:text-blue-500">
           <span className="text-xl mb-1">🏆</span>
