@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 
-// 1. MEGA PRIZE POOL (Exact emojis from your Screenshot)
+// 1. MEGA PRIZE POOL (Exact emojis)
 const prizePool = [
   { id: 1, name: "Crystals", icon: "✨", chance: "0.45%", value: 250, rarity: "legendary" },
   { id: 2, name: "Trophy", icon: "🏆", chance: "1.31%", value: 100, rarity: "epic" },
@@ -29,7 +29,7 @@ export default function CaseOpener() {
   const [betAmount, setBetAmount] = useState<BetLevel>(25);
   const [isDemo, setIsDemo] = useState(true);
   
-  // Animation & Game States
+  // Animation States
   const [isRolling, setIsRolling] = useState(false);
   const [stripItems, setStripItems] = useState<any[]>([]);
   const [sliderTranslate, setSliderTranslate] = useState(0);
@@ -38,17 +38,24 @@ export default function CaseOpener() {
   const [winningItem, setWinningItem] = useState<any | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  
-  // The Psychology Tracker (To manage wins and losses secretly)
   const spinCount = useRef(0);
   
-  // Set initial strip on load
+  // Hardcoded pixel values for 100% accuracy across all devices
+  const ITEM_WIDTH = 112; 
+  const GAP_WIDTH = 16;
+  const TOTAL_ITEM_BLOCK = ITEM_WIDTH + GAP_WIDTH; // 128px
+  
   useEffect(() => {
     if (isRolling) return;
     const initial = Array.from({ length: 15 }).map(() => prizePool[Math.floor(Math.random() * prizePool.length)]);
     initial[2] = bonusItem;
     setStripItems(initial);
-    setSliderTranslate(0);
+    
+    // Visually center the first item on page load
+    if (containerRef.current) {
+        const cw = containerRef.current.clientWidth;
+        setSliderTranslate((cw / 2) - (ITEM_WIDTH / 2));
+    }
     setTransitionStyle("none");
     setWinningItem(null);
   }, []);
@@ -56,47 +63,40 @@ export default function CaseOpener() {
   const startRoll = () => {
     if (isRolling) return;
     if (!isDemo && balance < betAmount) return alert("Not enough Stars!");
+    if (!containerRef.current) return;
 
     if (!isDemo) setBalance(prev => prev - betAmount);
     
     setIsRolling(true);
     setShowPopup(false);
     setWinningItem(null);
-    setTransitionStyle("none");
-    setSliderTranslate(0); 
 
-    // THE PSYCHOLOGY ALGORITHM 🧠 (Jitao, Harao, Jitao)
+    // WIN/LOSE ALGORITHM
     let riggedWinner: any;
-    
     if (isDemo) {
-      riggedWinner = demoGift; // Demo me hamesha test gift do
+      riggedWinner = demoGift; 
     } else {
       spinCount.current += 1;
-      const cycle = spinCount.current % 5; // Loop of 5 spins
+      const cycle = spinCount.current % 5; 
 
       if (cycle === 1) {
-        // SPIN 1: BREAK EVEN
         const evens = prizePool.filter(p => p.value === betAmount);
-        riggedWinner = evens[Math.floor(Math.random() * evens.length)] || prizePool[9]; // Fallback Gift
+        riggedWinner = evens[Math.floor(Math.random() * evens.length)] || prizePool[9]; 
       } 
       else if (cycle === 2) {
-        // SPIN 2: BIG WIN
         const wins = prizePool.filter(p => p.value > betAmount && p.value <= betAmount * 4);
-        riggedWinner = wins[Math.floor(Math.random() * wins.length)] || prizePool[1]; // Fallback Trophy
+        riggedWinner = wins[Math.floor(Math.random() * wins.length)] || prizePool[1]; 
       } 
       else if (cycle === 3 || cycle === 4) {
-        // SPIN 3 & 4: LOSE
         const losses = prizePool.filter(p => p.value < betAmount);
-        riggedWinner = losses[Math.floor(Math.random() * losses.length)] || prizePool[11]; // Fallback Teddy
+        riggedWinner = losses[Math.floor(Math.random() * losses.length)] || prizePool[11]; 
       } 
       else {
-        // SPIN 5: SMALL WIN
         const evens = prizePool.filter(p => p.value >= betAmount && p.value <= betAmount * 2);
-        riggedWinner = evens[Math.floor(Math.random() * evens.length)] || prizePool[4]; // Fallback Cake
+        riggedWinner = evens[Math.floor(Math.random() * evens.length)] || prizePool[4]; 
       }
     }
 
-    // TypeScript extreme safety check (Agar logic miss ho gaya to Teddy de do)
     if (!riggedWinner) {
         riggedWinner = prizePool[11];
     }
@@ -104,40 +104,42 @@ export default function CaseOpener() {
     const targetIndex = 65; 
     const generateStrip = Array.from({ length: 80 }).map((_, i) => {
       if (i === targetIndex) return riggedWinner;
-      // Beech-beech me bade items dikhao taaki visual hype bani rahe
       return Math.random() > 0.95 ? bonusItem : prizePool[Math.floor(Math.random() * prizePool.length)];
     });
 
     setStripItems(generateStrip);
 
-    setTimeout(() => {
-      if (!containerRef.current) return;
-      
-      const containerWidth = containerRef.current.offsetWidth;
-      const itemWidth = 128; // w-28 is 112px + gap-4 is 16px = 128px
-      
-      // Exact pixel math for center alignment
-      const centerOfTarget = (targetIndex * itemWidth) + (itemWidth / 2);
-      const exactScroll = centerOfTarget - (containerWidth / 2);
-      
-      // Slight random shift inside the card boundary for realism
-      const randomOffset = Math.floor(Math.random() * 40) - 20; 
-      
-      setTransitionStyle("transform 6s cubic-bezier(0.1, 0.9, 0.2, 1)");
-      setSliderTranslate(-(exactScroll + randomOffset));
+    const cw = containerRef.current.clientWidth;
+    
+    // STEP 1: Instantly snap to the start invisibly
+    setTransitionStyle("none");
+    setSliderTranslate((cw / 2) - (ITEM_WIDTH / 2));
 
-      setTimeout(() => {
-        setIsRolling(false);
-        setWinningItem(riggedWinner);
+    // STEP 2: Use double RequestAnimationFrame to force browser reflow
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // Exact Math: (Target Index * Total Block) + Half of item width
+        const exactCenterOfTarget = (targetIndex * TOTAL_ITEM_BLOCK) + (ITEM_WIDTH / 2);
         
-        // ✨ TYPESCRIPT ERROR FIXED HERE ✨
-        if (isDemo) {
-           setShowPopup(true);
-        } else if (riggedWinner) {
-           setBalance(prev => prev + riggedWinner.value);
-        }
-      }, 6000);
-    }, 50);
+        // Final position = Center of container minus exact center of target
+        const offset = Math.floor(Math.random() * 40) - 20; 
+        const finalTranslate = (cw / 2) - exactCenterOfTarget + offset;
+
+        setTransitionStyle("transform 6s cubic-bezier(0.1, 0.9, 0.2, 1)");
+        setSliderTranslate(finalTranslate);
+
+        setTimeout(() => {
+          setIsRolling(false);
+          setWinningItem(riggedWinner);
+          
+          if (isDemo) {
+             setShowPopup(true);
+          } else if (riggedWinner) {
+             setBalance(prev => prev + riggedWinner.value);
+          }
+        }, 6000);
+      });
+    });
   };
 
   return (
@@ -162,7 +164,7 @@ export default function CaseOpener() {
         </div>
       </div>
 
-      {/* Bet Selectors (Only 25 and 50 as requested) */}
+      {/* Bet Selectors */}
       <div className="w-full max-w-md flex gap-4 px-4 mt-6">
         {([25, 50] as BetLevel[]).map((amt) => (
           <button 
@@ -185,26 +187,29 @@ export default function CaseOpener() {
         ))}
       </div>
 
-      {/* CS:GO Style Rolling Slider */}
+      {/* CS:GO Style Rolling Slider - FIXED CSS LOGIC */}
       <div className="w-full max-w-md mt-6 relative h-44 flex items-center bg-[#0d0d14] border-y border-gray-800 overflow-hidden" ref={containerRef}>
         <div className="absolute left-1/2 -translate-x-1/2 w-16 h-full bg-blue-500/10 blur-xl z-0"></div>
         <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-1 bg-blue-500 z-20 shadow-[0_0_15px_rgba(59,130,246,1)]"></div>
 
+        {/* Removed paddingLeft logic completely, using explicit absolute positioning */}
         <div 
-          className="flex items-center gap-4 absolute left-0 z-10"
+          className="flex items-center absolute left-0 z-10"
           style={{
             transform: `translateX(${sliderTranslate}px)`,
             transition: transitionStyle,
             width: "max-content",
-            // Keep starting point clean
-            paddingLeft: "50%", 
+            gap: `${GAP_WIDTH}px` // Explicit 16px gap
           }}
         >
           {stripItems.map((item, idx) => (
-            <div key={idx} className={`w-28 h-36 rounded-2xl flex flex-col items-center justify-center border-2 shrink-0 relative overflow-hidden bg-[#15151e] ${
-              item.name === "Bonus" ? 'border-yellow-500 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)]' : 'border-gray-800'
-            }`}>
-              
+            <div 
+              key={idx} 
+              style={{ width: `${ITEM_WIDTH}px`, minWidth: `${ITEM_WIDTH}px` }} 
+              className={`h-36 rounded-2xl flex flex-col items-center justify-center border-2 shrink-0 relative overflow-hidden bg-[#15151e] ${
+                item.name === "Bonus" ? 'border-yellow-500 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)]' : 'border-gray-800'
+              }`}
+            >
               <span className="text-6xl drop-shadow-2xl z-10 select-none">{item.icon}</span>
 
               {item.name === "Bonus" && <span className="text-yellow-500 font-bold text-sm absolute bottom-2 tracking-widest z-10">BONUS</span>}
@@ -250,14 +255,13 @@ export default function CaseOpener() {
         </div>
       </div>
 
-      {/* Grid of Winning Possibilities (Exact Match of Screenshot) */}
+      {/* Grid of Winning Possibilities */}
       <div className="w-full max-w-md px-4 mt-10">
         <p className="text-center text-gray-400 font-medium mb-4">You can win...</p>
         <div className="grid grid-cols-4 gap-3">
           {prizePool.map((prize) => (
             <div key={prize.id} className="bg-[#15151e] border border-gray-800 rounded-2xl p-2 flex flex-col items-center relative overflow-hidden">
               
-              {/* Optional tag for rare items */}
               {prize.rarity === 'legendary' && (
                 <div className="absolute top-0 right-0 bg-blue-500 text-white text-[7px] font-bold px-4 py-1 rotate-45 translate-x-3 translate-y-1 shadow-md uppercase tracking-wider">Crystals</div>
               )}
