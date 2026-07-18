@@ -20,38 +20,33 @@ export default function SpinWheel() {
     setIsSpinning(true);
     
     // Simulate API call to your "Max Profit Algorithm"
-    // In production, fetch this from /api/spin
-    const mockResultIndex = 0; // Assuming Red (2x) wins to save liability
+    const mockResultIndex = 0; // Red wins
     
-    // Calculate rotation: 5 full spins (1800 deg) + offset for the winning slice
+    // Calculate rotation: 5 full spins (1800 deg) + offset
     const spinDegrees = 1800 + (mockResultIndex * 90);
     setRotation(rotation + spinDegrees);
 
     setTimeout(() => {
       setIsSpinning(false);
-      // Show winning popup logic here
-    }, 4000); // Animation duration
+    }, 4000); // 4 sec animation duration
   };
 
   return (
     <div className="flex flex-col items-center w-full p-4 bg-[#16161e] rounded-2xl border border-gray-800 shadow-xl mt-6">
       <h3 className="text-xl font-bold text-gray-200 mb-6">Mini-Game: Roulette</h3>
       
-      {/* The Wheel */}
       <div className="relative w-64 h-64 mb-8 flex justify-center items-center">
-        {/* Intricate center hub for a mechanical look */}
         <div className="absolute z-10 w-8 h-8 rounded-full border-4 border-gray-700 bg-gray-900 shadow-[0_0_15px_rgba(255,255,255,0.1)]"></div>
         <div className="absolute z-10 top-0 w-1 h-6 bg-white shadow-[0_0_10px_#fff]"></div>
         
         <motion.div 
           className="w-full h-full rounded-full border-4 border-[#252532] shadow-2xl overflow-hidden relative"
           animate={{ rotate: rotation }}
-          transition={{ duration: 4, ease: [0.15, 0.9, 0.2, 1] }} // Smooth tension release easing
+          transition={{ duration: 4, ease: [0.15, 0.9, 0.2, 1] }}
           style={{ background: 'conic-gradient(#ef4444 0 90deg, #fb923c 90deg 180deg, #3b82f6 180deg 270deg, #9333ea 270deg 360deg)' }}
         />
       </div>
 
-      {/* Bet Selection */}
       <div className="w-full flex justify-between gap-2 mb-6">
         {bets.map((bet, index) => (
           <button
@@ -77,4 +72,4 @@ export default function SpinWheel() {
       </button>
     </div>
   );
-      }
+}
