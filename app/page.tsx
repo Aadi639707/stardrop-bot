@@ -34,7 +34,6 @@ export default function Home() {
           {/* Game 1: Case Opener */}
           <Link href="/case-opener">
             <div className="relative overflow-hidden bg-gradient-to-br from-[#1a233a] to-[#0d1323] border border-blue-500/30 p-6 rounded-3xl flex items-center justify-between shadow-[0_0_20px_rgba(37,99,235,0.15)] active:scale-95 transition-all group hover:border-blue-500/60">
-              {/* Glow Effect */}
               <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-all"></div>
               
               <div className="z-10">
@@ -48,10 +47,9 @@ export default function Home() {
             </div>
           </Link>
 
-          {/* Game 2: Color Prediction */}
-          <Link href="/color-game">
+          {/* Game 2: Color Prediction (LINK FIXED TO /roulette) */}
+          <Link href="/roulette">
             <div className="relative overflow-hidden bg-gradient-to-br from-[#2a133a] to-[#160b1e] border border-purple-500/30 p-6 rounded-3xl flex items-center justify-between shadow-[0_0_20px_rgba(147,51,234,0.15)] active:scale-95 transition-all group hover:border-purple-500/60 mt-2">
-              {/* Glow Effect */}
               <div className="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition-all"></div>
               
               <div className="z-10">
