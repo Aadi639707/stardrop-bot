@@ -1,20 +1,6 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import Link from "next/link";
-
-const leaderboardData = [
-  { rank: 1, name: "King", points: "124,500", prize: "25,000", avatar: "👑" },
-  { rank: 2, name: "ToxicGamer", points: "98,200", prize: "10,000", avatar: "💀" },
-  { rank: 3, name: "Priya", points: "85,400", prize: "5,000", avatar: "👧" },
-  { rank: 4, name: "Rahul", points: "72,100", prize: "2,500", avatar: "👦" },
-  { rank: 5, name: "Aman", points: "65,300", prize: "1,000", avatar: "🧔" },
-  { rank: 6, name: "Sniper", points: "61,000", prize: "500", avatar: "🎯" },
-  { rank: 7, name: "Neha", points: "58,900", prize: "500", avatar: "👩" },
-  { rank: 8, name: "GamerX", points: "54,200", prize: "500", avatar: "🎮" },
-  { rank: 9, name: "Vikash", points: "49,100", prize: "250", avatar: "😎" },
-  { rank: 10, name: "Raj", points: "45,000", prize: "250", avatar: "🔥" },
-];
 
 export default function TournamentsPage() {
   const [timeLeft, setTimeLeft] = useState({ days: 2, hours: 14, mins: 35, secs: 59 });
@@ -43,83 +29,18 @@ export default function TournamentsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white pb-24">
-      {/* TOURNAMENT BANNER */}
-      <div className="px-4 mt-6">
-        <div className="bg-gradient-to-br from-blue-900 to-purple-900 border border-blue-500/50 rounded-3xl p-6 relative overflow-hidden shadow-[0_0_30px_rgba(59,130,246,0.2)]">
-           <div className="absolute -top-10 -right-10 w-32 h-32 bg-yellow-500 rounded-full blur-[60px] opacity-40"></div>
-           <span className="bg-blue-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Active Tournament</span>
-           <h1 className="text-3xl font-black text-white mt-3 italic drop-shadow-lg">WEEKEND FORTUNE</h1>
-           
-           <div className="flex items-center gap-2 mt-4">
-             <span className="text-gray-300 font-medium text-sm">Prize Pool:</span>
-             <span className="text-yellow-400 font-black text-xl">50,000 ⭐</span>
-           </div>
-
-           {/* TIMER */}
-           <div className="mt-6 flex gap-3">
-             {[
-               { val: timeLeft.days, label: "Days" },
-               { val: timeLeft.hours, label: "Hrs" },
-               { val: timeLeft.mins, label: "Mins" },
-               { val: timeLeft.secs, label: "Secs" }
-             ].map((t, i) => (
-               <div key={i} className="flex flex-col items-center bg-black/40 px-3 py-2 rounded-xl backdrop-blur-sm border border-white/10 w-16">
-                 <span className={`font-bold text-lg ${t.label === 'Secs' ? 'text-red-400 animate-pulse' : 'text-white'}`}>
-                   {String(t.val).padStart(2, '0')}
-                 </span>
-                 <span className="text-gray-400 text-[10px] uppercase font-bold">{t.label}</span>
-               </div>
-             ))}
-           </div>
-        </div>
+    <div className="min-h-screen bg-[#0a0a0f] text-white p-4">
+      <Link href="/" className="inline-block bg-[#15151e] px-4 py-2 rounded-xl border border-gray-800 mb-4">← Back</Link>
+      <div className="bg-gradient-to-br from-blue-900 to-purple-900 border border-blue-500/50 rounded-3xl p-6 shadow-xl">
+         <h1 className="text-3xl font-black text-white italic">WEEKEND FORTUNE</h1>
+         <p className="text-yellow-400 font-bold mt-2">Prize Pool: 50,000 ⭐</p>
+         <div className="mt-6 text-center text-red-400 font-black text-2xl animate-pulse">
+            {timeLeft.days}d {timeLeft.hours}h {timeLeft.mins}m {timeLeft.secs}s
+         </div>
       </div>
-
-      {/* USER RANKING */}
-      <div className="px-4 mt-6">
-        <div className="bg-[#15151e] border border-gray-700 rounded-2xl p-4 flex items-center justify-between shadow-lg">
-           <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-500">
-                 <img src="https://i.pravatar.cc/150?u=shivuu" alt="User" />
-              </div>
-              <div>
-                <p className="text-white font-bold text-sm">Aadi..!!</p>
-                <p className="text-gray-400 text-xs font-medium mt-0.5">Points: <span className="text-cyan-400">1,250</span></p>
-              </div>
-           </div>
-           <div className="text-right">
-              <p className="text-gray-400 text-xs uppercase font-bold mb-1">Your Rank</p>
-              <h2 className="text-white font-black text-2xl">#142</h2>
-           </div>
-        </div>
-      </div>
-
-      {/* LEADERBOARD */}
-      <div className="px-4 mt-8">
-        <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-          <span className="text-yellow-500">🏆</span> Top Players
-        </h3>
-        <div className="flex flex-col gap-2">
-          {leaderboardData.map((player) => {
-            const isTop = player.rank <= 3;
-            return (
-              <div key={player.rank} className={`border rounded-xl p-3 flex items-center justify-between ${isTop ? 'bg-amber-900/10 border-amber-500/30' : 'bg-[#15151e] border-gray-800'}`}>
-                 <div className="flex items-center gap-3">
-                    <div className={`w-8 text-center font-black ${player.rank === 1 ? 'text-yellow-400' : 'text-gray-500'}`}>#{player.rank}</div>
-                    <div className="w-10 h-10 bg-[#0a0a0f] rounded-full flex items-center justify-center text-xl">{player.avatar}</div>
-                    <div>
-                       <p className="font-bold text-sm text-white">{player.name}</p>
-                       <p className="text-gray-500 text-[10px] font-bold">{player.points} PTS</p>
-                    </div>
-                 </div>
-                 <div className="bg-[#0a0a0f] border border-gray-800 px-3 py-1.5 rounded-lg flex items-center gap-1">
-                    <span className="text-white font-bold text-sm">{player.prize}</span>
-                    <span className="text-yellow-500 text-xs">⭐</span>
-                 </div>
-              </div>
-            );
-          })}
-        </div>
+      <h2 className="text-white font-bold mt-8 mb-4">🏆 Top Players</h2>
+      <div className="bg-[#15151e] border border-gray-800 rounded-2xl p-4 text-center text-gray-500">
+         Leaderboard Loading... (Make sure this file is app/tourneys/page.tsx)
       </div>
     </div>
   );
