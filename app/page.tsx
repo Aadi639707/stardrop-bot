@@ -7,73 +7,67 @@ export default function Home() {
   const [balance] = useState(1000);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white pb-24">
-      {/* HEADER */}
-      <div className="flex justify-between items-center p-4">
-        <div className="flex items-center gap-2 bg-[#15151e] px-4 py-2 rounded-xl border border-gray-800">
-          <div className="w-6 h-6 rounded-full overflow-hidden border border-gray-600">
-            <img src="https://i.pravatar.cc/150?u=shivuu" alt="User" />
+    <div className="min-h-screen bg-[#0a0a0f] text-white p-4 pb-24 max-w-md mx-auto relative">
+      
+      {/* TOP HEADER */}
+      <div className="flex justify-between items-center mb-8 mt-2">
+        <div className="flex items-center gap-3 bg-[#15151e] px-4 py-2 rounded-2xl border border-gray-800 shadow-lg">
+          <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-600">
+            <img src="https://i.pravatar.cc/150?u=shivuu" alt="User" className="w-full h-full object-cover" />
           </div>
-          <span className="font-bold text-sm">Aadi..!!</span>
+          <span className="font-black text-sm tracking-wide">Aadi..!!</span>
         </div>
-        <div className="bg-[#15151e] px-4 py-2 rounded-xl border border-gray-800 font-bold">
-          {balance} ⭐
+        <div className="bg-[#15151e] px-4 py-2 rounded-2xl border border-gray-800 font-black shadow-lg flex items-center gap-1.5">
+          {balance} <span className="text-yellow-500 text-lg drop-shadow-md">⭐</span>
         </div>
       </div>
 
-      {/* DASHBOARD GAMES HUB */}
-      <div className="px-4 mt-6">
-        <h2 className="text-xl font-black mb-4">Casino Games 🎲</h2>
+      {/* GAMES LIST SECTION */}
+      <div className="w-full">
+        <h2 className="text-gray-400 font-bold text-xs tracking-widest uppercase mb-4 flex items-center gap-2">
+           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.8)]"></div>
+           Live Casino Games
+        </h2>
         
-        <div className="grid gap-4">
+        <div className="flex flex-col gap-4">
+          
           {/* Game 1: Case Opener */}
           <Link href="/case-opener">
-            <div className="bg-gradient-to-r from-blue-900 to-blue-800 border border-blue-500/30 p-6 rounded-3xl flex items-center justify-between shadow-lg active:scale-95 transition-transform">
-              <div>
-                <h3 className="text-xl font-bold">Case Opener</h3>
-                <p className="text-blue-300 text-xs">Spin the wheel and win big!</p>
+            <div className="relative overflow-hidden bg-gradient-to-br from-[#1a233a] to-[#0d1323] border border-blue-500/30 p-6 rounded-3xl flex items-center justify-between shadow-[0_0_20px_rgba(37,99,235,0.15)] active:scale-95 transition-all group hover:border-blue-500/60">
+              {/* Glow Effect */}
+              <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-all"></div>
+              
+              <div className="z-10">
+                <h3 className="text-2xl font-black text-white drop-shadow-md">Case Opener</h3>
+                <p className="text-blue-300/70 text-xs font-bold mt-1">Spin the wheel and win big!</p>
+                <div className="mt-3 bg-blue-500/20 border border-blue-500/30 text-blue-400 text-[9px] uppercase tracking-wider font-black px-2 py-1 rounded inline-block">
+                   HOT 🔥
+                </div>
               </div>
-              <span className="text-5xl">🎡</span>
+              <span className="text-6xl drop-shadow-[0_0_15px_rgba(0,0,0,0.5)] group-hover:scale-110 transition-transform z-10">🎡</span>
             </div>
           </Link>
 
           {/* Game 2: Color Prediction */}
           <Link href="/color-game">
-            <div className="bg-gradient-to-r from-purple-900 to-purple-800 border border-purple-500/30 p-6 rounded-3xl flex items-center justify-between shadow-lg active:scale-95 transition-transform">
-              <div>
-                <h3 className="text-xl font-bold">Color Prediction</h3>
-                <p className="text-purple-300 text-xs">Bet on colors, win up to 5x!</p>
+            <div className="relative overflow-hidden bg-gradient-to-br from-[#2a133a] to-[#160b1e] border border-purple-500/30 p-6 rounded-3xl flex items-center justify-between shadow-[0_0_20px_rgba(147,51,234,0.15)] active:scale-95 transition-all group hover:border-purple-500/60 mt-2">
+              {/* Glow Effect */}
+              <div className="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition-all"></div>
+              
+              <div className="z-10">
+                <h3 className="text-2xl font-black text-white drop-shadow-md">Color Game</h3>
+                <p className="text-purple-300/70 text-xs font-bold mt-1">Bet on colors, win up to 5x!</p>
+                <div className="mt-3 bg-purple-500/20 border border-purple-500/30 text-purple-400 text-[9px] uppercase tracking-wider font-black px-2 py-1 rounded inline-block">
+                   MULTIPLAYER 🟢
+                </div>
               </div>
-              <span className="text-5xl">🔴</span>
+              <span className="text-6xl drop-shadow-[0_0_15px_rgba(0,0,0,0.5)] group-hover:scale-110 transition-transform z-10">🔴</span>
             </div>
           </Link>
-        </div>
-      </div>
 
-      {/* BOTTOM NAVIGATION BAR */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#0d0d14]/90 backdrop-blur-md border-t border-gray-800 pb-2 pt-2 z-50">
-        <div className="flex justify-around items-center h-16">
-          <Link href="/tourneys" className="flex flex-col items-center text-gray-400">
-            <span className="text-xl">🏆</span>
-            <span className="text-[10px] font-bold">Tourneys</span>
-          </Link>
-          <Link href="/giveaways" className="flex flex-col items-center text-gray-400">
-            <span className="text-xl">🎁</span>
-            <span className="text-[10px] font-bold">Giveaways</span>
-          </Link>
-          <div className="bg-blue-600 p-3 rounded-full -mt-8 border-4 border-[#0a0a0f]">
-             <span className="text-2xl">🎲</span>
-          </div>
-          <Link href="/tasks" className="flex flex-col items-center text-gray-400">
-            <span className="text-xl">📋</span>
-            <span className="text-[10px] font-bold">Tasks</span>
-          </Link>
-          <Link href="/profile" className="flex flex-col items-center text-gray-400">
-            <span className="text-xl">👤</span>
-            <span className="text-[10px] font-bold">Profile</span>
-          </Link>
         </div>
       </div>
+      
     </div>
   );
 }
